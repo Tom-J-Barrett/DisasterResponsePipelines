@@ -29,6 +29,16 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
 def load_data(database_filepath):
+    """
+    Method to load in the required data from a SQL DB.
+    
+    Args:
+    database_filepath: Path to the DB file
+    Returns:
+    X pandas_dataframe: dataframe
+    Y pandas_dataframe: dataframe
+    category_names list: labels
+    """
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql("SELECT * FROM messages", engine)
     X = df['message'] 
@@ -38,6 +48,14 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Method to tokenize the text.
+    
+    Args:
+    test: Text to tokenize.
+    Returns:
+    lemmed : tokenized text
+    """
     text = text.lower() 
     text = re.sub(r"[^a-zA-Z0-9]", " ", text) 
     
@@ -52,6 +70,12 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Method to build the model/pipeline.
+    
+    Returns:
+    pipeline sklearn_pipeline: pipeline built
+    """
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -62,6 +86,15 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Method to evaluate a model.
+    
+    Args:
+    model: model to evaluate
+    X_test: data to preid_ct
+    Y_test: expected predictions
+    category_names: name of the categories
+_   """
     y_pred = model.predict(X_test)
 
     accuracy = (y_pred == Y_test).mean()
@@ -69,11 +102,21 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Method to save the model to a pickle file.
+    
+    Args:
+    model: Model to save.
+    model_filepath: File to save the model to.
+    """
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 
 
 def main():
+    """
+    Main method to train a classifier.
+    """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
