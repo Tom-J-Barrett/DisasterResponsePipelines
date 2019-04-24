@@ -75,14 +75,22 @@ def build_model():
     
     Returns:
     pipeline sklearn_pipeline: pipeline built
-    """
+    """ 
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', RandomForestClassifier())
+        ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    
-    return pipeline
+
+    parameters = {
+        'vect__ngram_range': ((1, 1), (1, 2)),
+        'vect__max_df': (0.5, 0.75, 1.0)
+    }
+
+    return GridSearchCV(estimator=pipeline,
+            param_grid=parameters,
+            verbose=3,
+            cv=3)
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
