@@ -43,6 +43,19 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Get occurence of each type
+    df_copy = df.copy()
+    df_copy = df_copy.drop(['id', 'message', 'original', 'genre'], axis = 1)
+    df_copy_cols = df_copy.columns
+    counts = []
+    for col in df_copy:
+        counts.append((df_copy[col]==1).sum())
+        
+    # Get occurence of each type in percentage
+    counts_percentage = []
+    for col in df_copy:
+        counts_percentage.append((df_copy[col]==1).sum()/df.size * 100)
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -55,12 +68,46 @@ def index():
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Distribution of Message Tags',
                 'yaxis': {
                     'title': "Count"
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        }, {
+            'data': [
+                Bar(
+                    x=df_copy_cols,
+                    y=counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Tags',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Tags"
+                }
+            }
+        }, {
+            'data': [
+                Bar(
+                    x=df_copy_cols,
+                    y=counts_percentage
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Tags in %',
+                'yaxis': {
+                    'title': "%"
+                },
+                'xaxis': {
+                    'title': "Tags"
                 }
             }
         }
