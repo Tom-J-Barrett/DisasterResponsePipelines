@@ -104,9 +104,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
     category_names: name of the categories
 _   """
     y_pred = model.predict(X_test)
-
-    accuracy = (y_pred == Y_test).mean()
-    print("Accuracy:\n", accuracy)
+    y_test = Y_test.values
+    for i in range(1, 37):
+        print(classification_report(y_test[i], y_pred[i]))
 
 
 def save_model(model, model_filepath):
